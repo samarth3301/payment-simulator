@@ -36,7 +36,7 @@ payment_simulation/
 
 1. **Clone and navigate to the project:**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/samarth3301/payment-simulator.git
    cd payment_simulation
    ```
 
