@@ -1,11 +1,116 @@
 # Payment Simulation API (Flask + PostgreSQL)
 
 ## 🚀 Overview
-This project simulates payment transactions using Flask and PostgreSQL. It supports UPI-based sender/receiver flows, mule accounts, and full transaction logging.
+This project simulate---
+
+## 📁 Project Structure
+
+```
+payment_simulation/
+├── app/
+│   ├── __init__.py          # Flask app factory
+│   ├── config/
+│   │   ├── database.py      # Database configuration
+│   │   └── envVars.py       # Environment variables
+│   ├── models/
+│   │   └── transactions.py  # Transaction model
+│   └── routes/
+│       ├── __init__.py
+│       └── example.py       # API endpoints
+├── migrations/              # Database migrations
+├── Dockerfile               # Docker image
+├── docker-compose.yml       # Production setup
+├── docker-compose.dev.yml   # Development setup
+├── pyproject.toml          # Python dependencies
+├── run.py                  # Application entry point
+└── README.md
+```
 
 ---
 
-## 🛠️ Installation & Setup
+## 🛠️ Manual Installation & Setupayment transactions using Flask and PostgreSQL. It supports UPI-based sender/receiver flows, mule accounts, and full transaction logging.
+
+## 🐳 Docker Setup (Recommended)
+
+### Quick Start with Docker Compose
+
+1. **Clone and navigate to the project:**
+   ```bash
+   git clone <your-repo-url>
+   cd payment_simulation
+   ```
+
+2. **Start all services:**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Run database migrations:**
+   ```bash
+   docker-compose exec app uv run flask --app run db upgrade
+   ```
+
+4. **Access the API:**
+   - API: http://localhost:5000
+   - PostgreSQL: localhost:5432
+
+### Docker Commands
+
+```bash
+# Start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up --build -d
+
+# Run database migrations
+docker-compose exec app uv run flask --app run db upgrade
+
+# Access PostgreSQL shell
+docker-compose exec postgres psql -U webond -d webond
+
+# Run tests
+docker-compose exec app uv run python test_db.py
+```
+
+### Docker Environment Variables
+
+The Docker setup uses `.env.docker` for configuration:
+
+```env
+PORT=5000
+DATABASE_URL=
+FLASK_ENV=production
+```
+
+### Docker Development Workflow
+
+```bash
+# Development with live reload
+docker-compose -f docker-compose.dev.yml up
+
+# Production deployment
+docker-compose up -d
+
+# View real-time logs
+docker-compose logs -f app
+
+# Scale the application
+docker-compose up -d --scale app=3
+
+# Clean up everything
+docker-compose down -v --rmi all
+```
+
+---
+
+## � Project Structure
 
 1. **Clone the repository:**
 	```bash

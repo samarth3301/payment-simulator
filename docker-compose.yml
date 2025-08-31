@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: payment_simulation_postgres
+    environment:
+      POSTGRES_DB: webond
+      POSTGRES_USER: webond
+      POSTGRES_PASSWORD: weBond@2025!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U webond -d webond"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - payment_network
+
+  # Flask Application
+  app:
+    build: .
+    container_name: payment_simulation_app
+    env_file:
+      - .env.docker
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - payment_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+
+networks:
+  payment_network:
+    driver: bridge
