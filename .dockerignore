@@ -26,6 +26,9 @@ venv/
 ENV/
 env/
 
+# Model files (generated during build)
+model/
+
 # IDE
 .vscode/
 .idea/
@@ -56,7 +59,6 @@ README.md
 *.md
 
 # Environment files
-.env
 .env.local
 .env.*.local
 

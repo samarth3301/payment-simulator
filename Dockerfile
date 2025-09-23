@@ -7,7 +7,9 @@ WORKDIR /app
 # Environment defaults
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PORT=5000
+
+ENV PORT=8080
+ENV FLASK_ENV=production
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -23,10 +25,15 @@ COPY pyproject.toml uv.lock ./
 COPY app/ ./app/
 COPY run.py ./
 COPY migrations/ ./migrations/
+COPY models/ ./models/
+COPY data/ ./data/
 COPY .env.docker ./.env
 
 # Install Python dependencies
 RUN uv pip install --system -e .
+
+# Train the fraud detection model
+RUN PYTHONPATH=/app python models/transaction-detection/run_training.py
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app \
@@ -34,11 +41,11 @@ RUN useradd --create-home --shell /bin/bash app \
 USER app
 
 # Expose port
-EXPOSE 5000
+EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT}/ || exit 1
 
-# Run the application with Gunicorn (binds to PORT or 5000 by default)
-CMD ["bash", "-lc", "gunicorn run:app --bind 0.0.0.0:${PORT}"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "4", "--worker-class", "sync", "--worker-connections", "1000", "--timeout", "30", "--keep-alive", "2", "--max-requests", "1000", "--max-requests-jitter", "50", "run:app"]
