@@ -4,14 +4,19 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
+# Environment defaults
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PORT=5000
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install uv
-RUN pip install uv
+# Install uv (fast pip) or fall back to pip
+RUN pip install --no-cache-dir uv
 
 # Copy project files
 COPY pyproject.toml uv.lock ./
@@ -33,7 +38,7 @@ EXPOSE 5000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/ || exit 1
+    CMD curl -f http://localhost:${PORT}/ || exit 1
 
-# Run the application
-CMD ["python", "run.py"]
+# Run the application with Gunicorn (binds to PORT or 5000 by default)
+CMD ["bash", "-lc", "gunicorn run:app --bind 0.0.0.0:${PORT}"]
