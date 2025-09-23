@@ -1,1 +1,1 @@
-web: gunicorn run:app --bind 0.0.0.0:$PORT 
+web: bash -lc 'FLASK_APP=run.py flask db init || true && FLASK_APP=run.py flask db stamp head || FLASK_APP=run.py flask db stamp base || true && gunicorn run:app --bind 0.0.0.0:$PORT'
