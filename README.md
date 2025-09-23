@@ -51,7 +51,7 @@ payment_simulation/
    ```
 
 4. **Access the API:**
-   - API: http://localhost:5000
+   - API: http://localhost:8080
    - PostgreSQL: localhost:5432
 
 ### Docker Commands
@@ -84,7 +84,7 @@ docker-compose exec app uv run python test_db.py
 The Docker setup uses `.env.docker` for configuration:
 
 ```env
-PORT=5000
+PORT=8080
 DATABASE_URL=
 FLASK_ENV=production
 ```
@@ -126,7 +126,7 @@ docker-compose down -v --rmi all
 3. **Configure environment:**
 	- Edit `.env` with your PostgreSQL credentials:
 	  ```env
-	  PORT=5000
+	  PORT=8080
 	  DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<database>
 	  ```
 
