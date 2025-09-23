@@ -27,7 +27,7 @@ COPY run.py ./
 COPY migrations/ ./migrations/
 COPY models/ ./models/
 COPY data/ ./data/
-COPY .env.docker ./.env
+COPY .env ./.env
 
 # Install Python dependencies
 RUN uv pip install --system -e .
