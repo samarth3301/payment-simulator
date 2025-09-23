@@ -9,7 +9,8 @@ dependencies = [
     "flask-sqlalchemy",
     "flask-migrate",
     "python-dotenv",
-    "psycopg2-binary"
+    "psycopg2-binary",
+    "flask-cors"
 ]
 
 [build-system]

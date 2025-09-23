@@ -1,4 +1,4 @@
-from .example import example_bp
+from .transaction import transaction_bp
 
 def register_routes(app):
-    app.register_blueprint(example_bp)
+    app.register_blueprint(transaction_bp)

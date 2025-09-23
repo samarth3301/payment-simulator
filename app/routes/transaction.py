@@ -3,16 +3,17 @@ from app.config.database import db
 from app.models.transactions import Transaction
 import uuid
 from datetime import datetime
+import random
 
-example_bp = Blueprint('example', __name__)
+transaction_bp = Blueprint('transaction', __name__)
 
-@example_bp.route("/", methods=['GET'])
+@transaction_bp.route("/", methods=['GET'])
 def get_transactions():
     """Get all transactions."""
     transactions = Transaction.query.order_by(Transaction.timestamp.desc()).all()
     return jsonify([t.to_dict() for t in transactions])
 
-@example_bp.route("/", methods=['POST'])
+@transaction_bp.route("/", methods=['POST'])
 def create_transaction():
     """Create a new transaction."""
     data = request.get_json()
@@ -39,15 +40,15 @@ def create_transaction():
     transaction_id = str(uuid.uuid4())[:16].upper()
 
     transaction = Transaction(
-        id=transaction_id,
-        amount=amount,
-        sender_upi_id=data['sender_upi_id'],
-        receiver_upi_id=data['receiver_upi_id'],
-        sender_name=data['sender_name'],
-        receiver_name=data['receiver_name'],
-        sender_phone=data['sender_phone'],
-        receiver_phone=data['receiver_phone'],
-        timestamp=datetime.utcnow()
+        id=transaction_id,  # type: ignore
+        amount=amount, # type: ignore
+        sender_upi_id=data['sender_upi_id'], # type: ignore
+        receiver_upi_id=data['receiver_upi_id'], # type: ignore
+        sender_name=data['sender_name'], # type: ignore
+        receiver_name=data['receiver_name'], # type: ignore
+        sender_phone=data['sender_phone'], # type: ignore
+        receiver_phone=data['receiver_phone'], # type: ignore
+        timestamp=datetime.now() # type: ignore
     )
 
     try:
@@ -58,7 +59,7 @@ def create_transaction():
         db.session.rollback()
         return jsonify({'error': 'Failed to create transaction', 'details': str(e)}), 500
 
-@example_bp.route("/<transaction_id>", methods=['GET'])
+@transaction_bp.route("/<transaction_id>", methods=['GET'])
 def get_transaction(transaction_id):
     """Get a specific transaction by ID."""
     transaction = Transaction.query.get_or_404(transaction_id)
