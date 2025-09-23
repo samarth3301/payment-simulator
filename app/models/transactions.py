@@ -1,5 +1,11 @@
 from app.config.database import db
 from datetime import datetime
+from enum import Enum
+
+class TransactionStatus(Enum):
+    PENDING = "pending"
+    FAILED = "failed"
+    SUCCESS = "success"
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
@@ -13,10 +19,16 @@ class Transaction(db.Model):
     sender_phone = db.Column(db.String(15), nullable=False)  # Phone number
     receiver_phone = db.Column(db.String(15), nullable=False)  # Phone number
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)  # Most important - indexed
+    
+    # New fields for payment simulation
+    status = db.Column(db.String(20), nullable=False, default=TransactionStatus.PENDING.value)
+    fraud_flag = db.Column(db.Boolean, default=False)
+    fraud_score = db.Column(db.Float, nullable=True)
 
     # Constraints
     __table_args__ = (
         db.CheckConstraint('amount > 0 AND amount <= 100000', name='amount_range'),  # 1 to 1 lakh
+        db.CheckConstraint("status IN ('pending', 'failed', 'success')", name='status_check'),
     )
 
     def __repr__(self):
@@ -33,5 +45,8 @@ class Transaction(db.Model):
             'receiver_name': self.receiver_name,
             'sender_phone': self.sender_phone,
             'receiver_phone': self.receiver_phone,
-            'timestamp': self.timestamp.isoformat()
+            'timestamp': self.timestamp.isoformat(),
+            'status': self.status,
+            'fraud_flag': self.fraud_flag,
+            'fraud_score': self.fraud_score
         }
